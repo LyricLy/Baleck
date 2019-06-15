@@ -1,3 +1,4 @@
+import math
 import pygame
 
 from pos_vec import Position
@@ -22,7 +23,7 @@ class Track:
     def draw(self, display):
         for point_list in self.point_lists:
             if len(point_list) > 1:
-                pygame.draw.lines(display, (100, 100, 100), False, point_list, 5)
+                pygame.draw.lines(display, (100, 100, 100), False, point_list, 10)
 
     def fitness(self, ball):
-        return -int(((self.start_angle - (ball.pos - self.center).angle) + 3.141) * 1000)
+        return math.degrees((ball.pos - self.center).angle - self.start_angle)

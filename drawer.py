@@ -39,7 +39,7 @@ while True:
         any_points = False
         for point in points[-1]:
             px, py = point
-            if (mx - px) ** 2 + (my - py) ** 2 < (5 ** 2):
+            if (mx - px) ** 2 + (my - py) ** 2 < ((5 * 15) ** 2):
                 any_points = True
         if not any_points:
             points[-1].append((mx, my))

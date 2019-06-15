@@ -10,9 +10,15 @@ class Position:
         self.x += vec.x
         self.y += vec.y
 
-    def __sub__(self, other):
-        if not isinstance(other, Position):
+    def __repr__(self):
+        return f"Position({self.x}, {self.y})"
+
+    def __add__(self, other):
+        if not isinstance(other, Vector):
             return NotImplemented
+        return Position(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
         return Vector(self.x - other.x, self.y - other.y)
 
     def distance(self, other):

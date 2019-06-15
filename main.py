@@ -44,9 +44,9 @@ class Game:
             for b in self.balls:
                 if b.enabled:
                     f = self.track.fitness(b)
-                    if f - self.fitnesses[b] > 6000:
+                    if f - self.fitnesses[b] < -350:
                         self.laps[b] += 1
-                    elif f - self.fitnesses[b] < -6000:
+                    elif f - self.fitnesses[b] > 350:
                         self.laps[b] -= 1
                     self.fitnesses[b] = f
 
@@ -58,20 +58,22 @@ class Game:
                 break
 
     def get_fitness(self, ball):
-        return self.laps[ball] * 6283 + self.fitnesses[ball]
+        return self.laps[ball] * 360 + self.fitnesses[ball]
 
 
 with open(sys.argv[1]) as t:
     track = Track(json.load(t))
 
 display = pygame.display.set_mode((1280, 720))
-pool = [Network(2, [6, 3]) for _ in range(100)]
+pool = [Network(10, [6, 3]) for _ in range(100)]
+draw_default = True
 
 while True:
     game = Game(display, pool, track)
+    game.draw = draw_default
     game.run(120)
-    print(game.fitnesses)
-    game.balls.sort(key=game.get_fitness, reverse=False)
+    draw_default = game.draw
+    game.balls.sort(key=game.get_fitness, reverse=True)
     pool = [b.net for b in game.balls]
     del pool[50:]
     new_nets = []

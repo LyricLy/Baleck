@@ -1,3 +1,4 @@
+import copy
 import random
 
 
@@ -13,7 +14,7 @@ class Node:
 
     def mutate(self):
         for i in range(len(self.before)):
-            if random.random() < 1:
+            if random.random() < 0.1:
                 n, w = self.before[i]
                 self.before[i] = (n, w + random.uniform(-0.1, 0.1))
 
@@ -58,7 +59,7 @@ class Network:
 
     def mutated(self):
         new_net = Network(0, [])
-        new_net.layers = self.layers
+        new_net.layers = copy.deepcopy(self.layers)
         for layer in new_net.layers:
             for node in layer:
                 node.mutate()
