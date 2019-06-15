@@ -71,7 +71,7 @@ draw_default = True
 while True:
     game = Game(display, pool, track)
     game.draw = draw_default
-    game.run(120)
+    game.run(600)
     draw_default = game.draw
     game.balls.sort(key=game.get_fitness, reverse=True)
     pool = [b.net for b in game.balls]
