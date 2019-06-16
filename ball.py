@@ -20,11 +20,10 @@ class Ball:
         self.vec = Vector.from_angle(self.vec.angle, max(self.vec.magnitude - friction, 0))
 
     def draw(self, colour):
-        if self.game.draw:
-            pygame.draw.circle(self.game.display,
-                               colour,
-                               (int(self.pos.x), int(self.pos.y)),
-                               self.radius)
+        pygame.draw.circle(self.game.display,
+                           colour,
+                           (int(self.pos.x), int(self.pos.y)),
+                           self.radius)
 
 
 class AI(Ball):
@@ -49,7 +48,7 @@ class AI(Ball):
         for ri, d in enumerate(range(0, 360, 360 // 8)):
             for point_list in point_lists:
                 for i in range(len(point_list) - 1):
-                    args = self.pos, self.pos + Vector.from_angle(math.radians(d) + self.vec.angle, CHECK_RANGE), point_list[i], point_list[i+1]
+                    args = self.pos, self.pos + Vector.from_angle(math.radians(d), CHECK_RANGE), point_list[i], point_list[i+1]
                     r = intersect(*args)
                     if r:
                         results[ri] = self.pos.distance(r) / CHECK_RANGE

@@ -3,10 +3,11 @@ import copy
 import sys
 import json
 import pygame
+import math
 
 from collections import defaultdict
 from network import Network
-from pos_vec import Position
+from pos_vec import Position, Vector
 from track import Track
 
 
@@ -16,14 +17,18 @@ class Game:
         self.draw = True
         self.track = track
         self.balls = []
-        self.fitnesses = defaultdict(int)
-        self.laps = defaultdict(int)
+        self.survived = defaultdict(int)
         for net in nets:
             self.balls.append(ball.AI(net, self, track.start.copy()))
 
-    def run(self, count):
+    def run(self):
         clock = pygame.time.Clock()
-        for _ in range(count):
+        fitnesses = defaultdict(int)
+        laps = defaultdict(int)
+        ray = -6
+        counter = 0
+
+        while True:
             self.display.fill((0, 255, 40))
 
             for event in pygame.event.get():
@@ -41,24 +46,36 @@ class Game:
                 if b.enabled:
                     b.step()
 
-            for b in self.balls:
-                if b.enabled:
-                    f = self.track.fitness(b)
-                    if f - self.fitnesses[b] < -350:
-                        self.laps[b] += 1
-                    elif f - self.fitnesses[b] > 350:
-                        self.laps[b] -= 1
-                    self.fitnesses[b] = f
+            if counter % 10 == 0:
+                for b in self.balls:
+                    if b.enabled:
+                        self.survived[b] += 1
+                        f = self.track.fitness(b)
+                        if f - fitnesses[b] < -350:
+                            laps[b] += 360
+                        elif f - fitnesses[b] > 350:
+                            laps[b] -= 360
+                        fitnesses[b] = f
+                        if laps[b] + f < ray:
+                            b.enabled = False
+            ray += 0.2
 
             if self.draw:
-                pygame.display.flip()
+                p1 = self.track.center
+                p2 = self.track.center + Vector.from_angle(math.radians(ray) + self.track.start_angle, 1280)
+                pygame.draw.line(self.display, (255, 0, 0), (p1.x, p1.y), (p2.x, p2.y), 2)
+
+            counter += 1
+
+            pygame.display.flip()
+            if self.draw:
                 clock.tick(60)
 
             if not any(b.enabled for b in self.balls):
                 break
 
     def get_fitness(self, ball):
-        return self.laps[ball] * 360 + self.fitnesses[ball]
+        return self.survived[ball]
 
 
 with open(sys.argv[1]) as t:
@@ -71,7 +88,7 @@ draw_default = True
 while True:
     game = Game(display, pool, track)
     game.draw = draw_default
-    game.run(600)
+    game.run()
     draw_default = game.draw
     game.balls.sort(key=game.get_fitness, reverse=True)
     pool = [b.net for b in game.balls]
