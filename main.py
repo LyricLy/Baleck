@@ -82,7 +82,7 @@ with open(sys.argv[1]) as t:
     track = Track(json.load(t))
 
 display = pygame.display.set_mode((1280, 720))
-pool = [Network(10, [6, 3]) for _ in range(100)]
+pool = [Network(10, [10, 3]) for _ in range(100)]
 draw_default = True
 
 while True:
