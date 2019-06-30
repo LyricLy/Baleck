@@ -35,6 +35,7 @@ class AI(Ball):
     def step(self):
         CHECK_RANGE = 100
         results = [1] * 8
+        angle = self.vec.angle
 
         point_lists = []
         for point_list in self.game.track.point_lists:
@@ -48,7 +49,7 @@ class AI(Ball):
         for ri, d in enumerate(range(0, 360, 360 // 8)):
             for point_list in point_lists:
                 for i in range(len(point_list) - 1):
-                    args = self.pos, self.pos + Vector.from_angle(math.radians(d), CHECK_RANGE), point_list[i], point_list[i+1]
+                    args = self.pos, self.pos + Vector.from_angle(math.radians(d) + angle, CHECK_RANGE), point_list[i], point_list[i+1]
                     r = intersect(*args)
                     if r:
                         results[ri] = self.pos.distance(r) / CHECK_RANGE
@@ -60,8 +61,8 @@ class AI(Ball):
             *results
         ])
 
-        power = min(max(power, 0), 0.1)
-        self.vec += (Vector.from_angle(Vector(fx, fy).angle, power))
+        power = (power + 1) / 20
+        self.vec += (Vector.from_angle(Vector(fx, fy).angle + angle, power))
 
         if self.game.track.hit(self.game.display, self.pos):
             self.enabled = False

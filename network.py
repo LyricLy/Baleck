@@ -1,8 +1,9 @@
 import copy
 import random
+import math
 
 
-activation = lambda x: x
+activation = math.tanh
 
 class Node:
     def __init__(self):
@@ -23,7 +24,7 @@ class ConstantNode:
     def __init__(self, num):
         self.num = num
 
-    def evaluate(self, inp):
+    def evaluate(self, inp ):
         return self.num
 
     def mutate(self):

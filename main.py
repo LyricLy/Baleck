@@ -51,12 +51,15 @@ class Game:
                     if b.enabled:
                         self.survived[b] += 1
                         f = self.track.fitness(b)
-                        if f - fitnesses[b] < -350:
-                            laps[b] += 360
-                        elif f - fitnesses[b] > 350:
+                        if f < -1 and fitnesses[b] > -1:
                             laps[b] -= 360
+                        elif f > -1 and fitnesses[b] < -1:
+                            laps[b] += 360
                         fitnesses[b] = f
                         if laps[b] + f < ray:
+                            b.enabled = False
+                        elif laps[b] >= 360:
+                            self.survived[b] = 360 * 2 - self.survived[b]
                             b.enabled = False
             ray += 0.2
 
